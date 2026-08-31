@@ -22,7 +22,7 @@ export const corsOption: CorsOptions = {
   // set credentials to true -> means allow cookies and JWT tokens, these required for authentication systems
   credentials: true,
 
-  // set HTTP methods aloowed from frontends
+  // set HTTP methods allowed from frontends
   methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
   // set headers which are allowed in request
   allowedHeaders: ["Content-Type", "Authorization"],
