@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     avatar: {
       type: String,
@@ -44,6 +45,7 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
     },
     refreshToken: {
       type: String,
+      select: false,
     },
   },
   { timestamps: true },
