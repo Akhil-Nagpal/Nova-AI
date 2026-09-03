@@ -41,7 +41,7 @@ export const loginUserService = async ({ email, password }: LoginPayload) => {
   const existingUser = await User.findOne({ email: email }).select("+password");
   // check if the user exists, if not throw error
   if (!existingUser) {
-    throw new ApiError(404, "User Not Found!");
+    throw new ApiError(404, "User not found!");
   }
   // if yes then check the password is same as in DB
   const isPasswordValid = await existingUser.comparePassword(password);
@@ -64,4 +64,20 @@ export const loginUserService = async ({ email, password }: LoginPayload) => {
   } = existingUser.toObject();
   // return the user and tokens
   return { user: safeUser, accessToken, refreshToken };
+};
+
+// Logout user service
+export const logoutUserService = async (userId: string) => {
+  // find the user by userId
+  const user = await User.findById(userId);
+  // check if the user exists or not
+  if (!user) {
+    throw new ApiError(404, "User not found!");
+  }
+  // delete the refresh token from user doc
+  user.refreshToken = undefined;
+  // save the user
+  await user.save({ validateBeforeSave: false });
+  // return true for compeletion
+  return true;
 };

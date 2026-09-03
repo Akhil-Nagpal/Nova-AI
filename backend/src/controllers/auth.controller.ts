@@ -2,9 +2,11 @@ import type { Request, Response } from "express";
 import { asyncHandler } from "../utils/aysynchandler";
 import {
   loginUserService,
+  logoutUserService,
   registerUserService,
 } from "../services/auth.service";
 import { ApiResponse } from "../utils/apiResponse";
+import { ApiError } from "../utils/apiError";
 
 // Note: validation are handling by zod
 
@@ -54,4 +56,22 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, "Login Successfull", user))
     .cookie("accessToken", accessToken, accessTokenCookieOptions)
     .cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
+});
+
+// User Logout
+export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
+  // check if the user exists or not
+  if (!req.user) {
+    throw new ApiError(401, "Unauthorized request!");
+  }
+  // get the userid
+  const userId = req.user._id;
+  // call the service
+  await logoutUserService(userId.toString());
+  // give back the response to the client
+  res
+    .status(200)
+    .clearCookie("accessToken", accessTokenCookieOptions)
+    .clearCookie("refreshToken", refreshTokenCookieOptions)
+    .json(new ApiResponse(200, "Logout successfull", null));
 });

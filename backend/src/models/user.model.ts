@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
+import mongoose, { type Document } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt, { type SignOptions } from "jsonwebtoken";
 
-export interface IUser {
+export interface IUser extends Document {
   fullName: string;
   email: string;
   password: string;
   avatar: string;
   isEmailVerified: boolean;
-  refreshToken: string;
+  refreshToken: string | undefined;
   createdAt: Date;
   updatedAt: Date;
 }
