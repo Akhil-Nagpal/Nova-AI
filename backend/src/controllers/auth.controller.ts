@@ -4,6 +4,7 @@ import {
   loginUserService,
   logoutUserService,
   registerUserService,
+  tokenRotationService,
 } from "../services/auth.service";
 import { ApiResponse } from "../utils/apiResponse";
 import { ApiError } from "../utils/apiError";
@@ -75,3 +76,24 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
     .clearCookie("refreshToken", refreshTokenCookieOptions)
     .json(new ApiResponse(200, "Logout successfull", null));
 });
+
+// Refresh Token Rotation
+export const tokenRotation = asyncHandler(
+  async (req: Request, res: Response) => {
+    // get the refresh token from cookies
+    const incomingToken = req.cookies?.refreshToken;
+    // check if it exists or not
+    if (!incomingToken) {
+      throw new ApiError(401, "Refresh Token does not exist!");
+    }
+    // call the service
+    const { accessToken, refreshToken } =
+      await tokenRotationService(incomingToken);
+    // give back the reposne to the client
+    res
+      .status(200)
+      .cookie("accessToken", accessToken, accessTokenCookieOptions)
+      .cookie("refreshToken", refreshToken, refreshTokenCookieOptions)
+      .json(new ApiResponse(200, "Refresh token roatated!", null));
+  },
+);

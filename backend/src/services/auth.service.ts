@@ -1,5 +1,6 @@
 import { User } from "../models/user.model";
 import { ApiError } from "../utils/apiError";
+import jwt from "jsonwebtoken";
 
 interface RegisterPayload {
   fullName: string;
@@ -80,4 +81,34 @@ export const logoutUserService = async (userId: string) => {
   await user.save({ validateBeforeSave: false });
   // return true for compeletion
   return true;
+};
+
+// Token Rotation Service
+export const tokenRotationService = async (incomingToken: string) => {
+  // get the user and verify the token
+  const verifyToken = jwt.verify(
+    incomingToken,
+    Bun.env.REFRESH_TOKEN_SECRET!,
+  ) as { _id: string };
+  // find the user by id
+  const user = await User.findById(verifyToken._id).select("+refreshToken");
+  // check if the user exists or not
+  if (!user) {
+    throw new ApiError(401, "Invalid refresh token");
+  }
+  // check if the token is same as saved in DB
+  if (incomingToken !== user.refreshToken) {
+    throw new ApiError(401, "Refresh token is reused or expired");
+  }
+  // if not make the user logout forcefully by deleting the refesh token and save the user
+  user.refreshToken = undefined;
+  await user.save({ validateBeforeSave: false });
+  // generate the new token
+  const newAccessToken = user.generateAccessToken();
+  const newRefreshToken = user.generateRefreshToken();
+  // set the refresh token and save the user
+  user.refreshToken = newRefreshToken;
+  await user.save({ validateBeforeSave: false });
+  // return the tokens
+  return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
