@@ -22,7 +22,7 @@ const accessTokenCookieOptions = {
 
 const refreshTokenCookieOptions = {
   httpOnly: true,
-  samSite: "strict" as const,
+  sameSite: "strict" as const,
   secure: isProduction,
   maxAge: Number(Bun.env.REFRESH_TOKEN_MAX_AGE),
 };
@@ -38,7 +38,7 @@ export const registerUser = asyncHandler(
     // give back the response to the client
     res
       .status(201)
-      .json(new ApiResponse(200, "User Registered Succussfully!", user));
+      .json(new ApiResponse(201, "User Registered Succussfully!", user));
   },
 );
 
@@ -54,9 +54,9 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   // give back the reposne to the client
   res
     .status(200)
-    .json(new ApiResponse(200, "Login Successfull", user))
     .cookie("accessToken", accessToken, accessTokenCookieOptions)
-    .cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
+    .cookie("refreshToken", refreshToken, refreshTokenCookieOptions)
+    .json(new ApiResponse(200, "Login Successfull", user));
 });
 
 // User Logout

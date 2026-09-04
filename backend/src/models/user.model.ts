@@ -51,9 +51,6 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
   { timestamps: true },
 );
 
-// Indexes
-userSchema.index({ email: 1 });
-
 // Adding password hashing using bcrypt
 userSchema.pre("save", async function () {
   // check if the password modified or not, if not then dont hash

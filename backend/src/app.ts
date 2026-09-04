@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Server is running 🚀");
+  res.send("Server is running! HURRRAY! 🚀");
 });
 
 // Routes
