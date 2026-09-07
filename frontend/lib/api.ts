@@ -1,14 +1,11 @@
 import axios from "axios";
+import { apiClient } from "./apiClient";
 
-// get the base url from env
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
-//   now write the asynv function with message and convo id params
+//   now write the async function with message and convo id params
 export const sendMessage = async (message: string, conversationId?: string) => {
   try {
     // call the api
-    const response = await axios.post(`${API_BASE}/api/v1/chat`, {
+    const response = await apiClient.post("/api/v1/chat", {
       message,
       conversationId,
     });
@@ -19,5 +16,6 @@ export const sendMessage = async (message: string, conversationId?: string) => {
     if (axios.isAxiosError(error)) {
       throw new Error(error?.response?.data?.message);
     }
+    throw error;
   }
 };
