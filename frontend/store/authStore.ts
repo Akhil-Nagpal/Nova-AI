@@ -13,14 +13,15 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  // set user to null initial
   user: null,
-  // also the isAuthenticated to false
   isAuthenticated: false,
-  // first 2 values set to default like user not exists or logged in
 
-  // Now set the user to logged in and isAuthenticated true
-  setUser: (user: User) => set({ user, isAuthenticated: true }), // This function is called when handleLogin
-  // clear user will tell the app the user is logged out or not exists
-  clearUser: () => set({ user: null, isAuthenticated: false }), // This function is called for logout
+  // Called after successful login/register API response.
+  // Only updates local UX state — does NOT grant backend access.
+  // Actual auth check happens server-side via verifyJWT on every request.
+  setUser: (user: User) => set({ user, isAuthenticated: true }),
+
+  // Called on logout, or when a token refresh fails (e.g. 401 from backend).
+  // Resets UI state only — cookie invalidation must happen server-side too.
+  clearUser: () => set({ user: null, isAuthenticated: false }),
 }));
