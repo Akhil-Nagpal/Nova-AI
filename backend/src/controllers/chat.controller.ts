@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import {
+  deleteConversationService,
   getConversationsService,
   getGeminiChatService,
   getSingleConversationService,
@@ -91,5 +92,32 @@ export const getGeminiChat = asyncHandler(
     res
       .status(200)
       .json(new ApiResponse(200, "Chat fetched successfully", geminiResponse));
+  },
+);
+
+// delete the single conversation
+export const deleteConversation = asyncHandler(
+  async (req: Request, res: Response) => {
+    // check if the user exists or not
+    if (!req.user) {
+      throw new ApiError(401, "Unauthorized request");
+    }
+    // get the user
+    const userId = req.user._id;
+    // get the conversation
+    const { conversationId } = req.params;
+    // check if conversation id exists or not
+    if (!conversationId) {
+      throw new ApiError(400, "Conversation ID is required");
+    }
+    // call the service
+    await deleteConversationService(
+      userId.toString(),
+      conversationId?.toString(),
+    );
+    // give the response back to client
+    res
+      .status(200)
+      .json(new ApiResponse(200, "Conversation deleted successfully!", null));
   },
 );

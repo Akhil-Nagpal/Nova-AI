@@ -96,7 +96,7 @@ export const getGeminiChatService = async (
   // Step 7 - Send the conversation and system prompt to Gemini
   let lastError: unknown;
 
-  // loopt through the Gemini Models
+  // loop through the Gemini Models
   for (let model of GEMINI_MODELS) {
     try {
       // call the gemini service
@@ -147,7 +147,7 @@ export const getGeminiChatService = async (
       if (status === 429) {
         throw {
           status: 429,
-          message: "Daily Tokem limit has been used. Please try again later!",
+          message: "Daily Token limit has been used. Please try again later!",
         };
       }
 
@@ -160,7 +160,7 @@ export const getGeminiChatService = async (
       throw error;
     }
   }
-  // if all models failed to responsed then return the error
+  // if all models failed to respond then return the error
   if (lastError) {
     throw lastError;
   } else {
@@ -169,4 +169,26 @@ export const getGeminiChatService = async (
       message: "Nova is temporarily unavailable. Please try again later!",
     };
   }
+};
+
+// delete the conversation service
+export const deleteConversationService = async (
+  userId: string,
+  conversationId: string,
+) => {
+  // find the conversation
+  const conversation = await Conversation.findOne({
+    user: userId,
+    conversation: conversationId,
+  });
+  // check if the conversation exists or not
+  if (!conversation) {
+    throw new ApiError(404, "Conversation not found!");
+  }
+  // delete the messages inside single conversation
+  await Message.deleteMany({ conversation: conversationId });
+  // delete the conversation
+  await Conversation.deleteOne({ _id: conversationId });
+  // return
+  return;
 };

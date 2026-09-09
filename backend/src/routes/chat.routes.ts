@@ -16,6 +16,9 @@ router.get("/conversations", verifyJWT, getConversations);
 // get single conversation
 router.get("/conversations/:id", verifyJWT, getSingleConversation);
 
+// delete the conversation
+router.delete("/conversations/:id", verifyJWT);
+
 // chat route
 router.post("/chat", verifyJWT, validate(chatMessageSchema), getGeminiChat);
 
