@@ -15,6 +15,28 @@ export const getConversationsService = async (userId: string) => {
   return conversations;
 };
 
+// get single conversation service
+export const getSingleConversationService = async (
+  userId: string,
+  conversationId: string,
+) => {
+  // find the conversation
+  const conversation = await Conversation.findOne({
+    user: userId,
+    _id: conversationId,
+  });
+  // check if the conversation exists or not
+  if (!conversation) {
+    throw new ApiError(404, "Conversation not found!");
+  }
+  // if conversation found then query the Messages inside it, in descending order (latest messages first)
+  const messages = await Message.find({
+    conversation: conversationId,
+  }).sort({ createdAt: 1 });
+  // return the conversation and messages
+  return { conversation, messages };
+};
+
 export const getGeminiChatService = async (
   userId: string,
   conversationId: string | undefined,

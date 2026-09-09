@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler";
 import {
   getConversationsService,
   getGeminiChatService,
+  getSingleConversationService,
 } from "../services/chat.service";
 import { ApiResponse } from "../utils/apiResponse";
 import { ApiError } from "../utils/apiError";
@@ -12,7 +13,7 @@ export const getConversations = asyncHandler(
   async (req: Request, res: Response) => {
     // check if user exists or not
     if (!req.user) {
-      throw new ApiError(404, "User not found!");
+      throw new ApiError(401, "Unauthorized request!");
     }
     // get the user
     const userId = req.user._id;
@@ -31,6 +32,40 @@ export const getConversations = asyncHandler(
   },
 );
 
+// get single conversation
+export const getSingleConversation = asyncHandler(
+  async (req: Request, res: Response) => {
+    // check if the user exists or not
+    if (!req.user) {
+      throw new ApiError(401, "Unauthorized request!");
+    }
+    // get the user id
+    const userId = req.user._id;
+    // get the conversation id from params
+    const { conversationId } = req.params;
+    // check if the conversation exists or not
+    if (!conversationId) {
+      throw new ApiError(400, "Conversation id is required");
+    }
+    // call the service
+    const singleConversation = await getSingleConversationService(
+      userId.toString(),
+      conversationId.toString(),
+    );
+    // give back the response to the client
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "Single conversation fetched successful!",
+          singleConversation,
+        ),
+      );
+  },
+);
+
+// generate chat
 export const getGeminiChat = asyncHandler(
   async (req: Request, res: Response) => {
     // check if the user exists or not
