@@ -5,6 +5,16 @@ import { Message } from "../models/message.model";
 import { getSystemPrompt } from "../prompts/prompt.router";
 import { ApiError } from "../utils/apiError";
 
+// get all conversations service
+export const getConversationsService = async (userId: string) => {
+  // find the conversations and select the required fields
+  const conversations = await Conversation.find({ user: userId })
+    .select("-id title updatedAt")
+    .sort({ updatedAt: -1 });
+  // return the conversations
+  return conversations;
+};
+
 export const getGeminiChatService = async (
   userId: string,
   conversationId: string | undefined,
@@ -28,7 +38,7 @@ export const getGeminiChatService = async (
     conversation = await Conversation.create({ user: userId });
   }
 
-  // STEP 2: Retreive the chat history from conversation and get the latest first
+  // STEP 2: Retrieve the chat history from conversation and get the latest first
   const previousMessages = await Message.find({
     conversation: conversation._id,
   }).sort({ createdAt: 1 });

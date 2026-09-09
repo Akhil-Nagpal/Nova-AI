@@ -1,8 +1,35 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
-import { getGeminiChatService } from "../services/chat.service";
+import {
+  getConversationsService,
+  getGeminiChatService,
+} from "../services/chat.service";
 import { ApiResponse } from "../utils/apiResponse";
 import { ApiError } from "../utils/apiError";
+
+// get all conversations
+export const getConversations = asyncHandler(
+  async (req: Request, res: Response) => {
+    // check if user exists or not
+    if (!req.user) {
+      throw new ApiError(404, "User not found!");
+    }
+    // get the user
+    const userId = req.user._id;
+    // call the service
+    const conversations = await getConversationsService(userId.toString());
+    // give back the response to the client
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "All conversations fetched successfully!",
+          conversations,
+        ),
+      );
+  },
+);
 
 export const getGeminiChat = asyncHandler(
   async (req: Request, res: Response) => {
