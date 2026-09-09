@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { asyncHandler } from "../utils/aysynchandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import {
   loginUserService,
   logoutUserService,
@@ -38,7 +38,7 @@ export const registerUser = asyncHandler(
     // give back the response to the client
     res
       .status(201)
-      .json(new ApiResponse(201, "User Registered Succussfully!", user));
+      .json(new ApiResponse(201, "User Registered Successfully!", user));
   },
 );
 
@@ -51,12 +51,12 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     email,
     password,
   });
-  // give back the reposne to the client
+  // give back the response to the client
   res
     .status(200)
     .cookie("accessToken", accessToken, accessTokenCookieOptions)
     .cookie("refreshToken", refreshToken, refreshTokenCookieOptions)
-    .json(new ApiResponse(200, "Login Successfull", user));
+    .json(new ApiResponse(200, "Login Successful", user));
 });
 
 // User Logout
@@ -74,7 +74,7 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
     .status(200)
     .clearCookie("accessToken", accessTokenCookieOptions)
     .clearCookie("refreshToken", refreshTokenCookieOptions)
-    .json(new ApiResponse(200, "Logout successfull", null));
+    .json(new ApiResponse(200, "Logout successful", null));
 });
 
 // Refresh Token Rotation
@@ -89,11 +89,11 @@ export const tokenRotation = asyncHandler(
     // call the service
     const { accessToken, refreshToken } =
       await tokenRotationService(incomingToken);
-    // give back the reposne to the client
+    // give back the response to the client
     res
       .status(200)
       .cookie("accessToken", accessToken, accessTokenCookieOptions)
       .cookie("refreshToken", refreshToken, refreshTokenCookieOptions)
-      .json(new ApiResponse(200, "Refresh token roatated!", null));
+      .json(new ApiResponse(200, "Refresh token rotated!", null));
   },
 );

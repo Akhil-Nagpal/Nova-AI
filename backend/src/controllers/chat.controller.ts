@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { asyncHandler } from "../utils/aysynchandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import { getGeminiChatService } from "../services/chat.service";
 import { ApiResponse } from "../utils/apiResponse";
 import { ApiError } from "../utils/apiError";

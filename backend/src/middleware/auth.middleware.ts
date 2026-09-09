@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { asyncHandler } from "../utils/aysynchandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/apiError";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model";
@@ -13,7 +13,7 @@ export const verifyJWT = asyncHandler(
       throw new ApiError(401, "Token required");
     }
     try {
-      // verify the token, does that meatch
+      // verify the token, does that matcha
       const verifyToken = jwt.verify(token, Bun.env.ACCESS_TOKEN_SECRET!) as {
         _id: string;
       };
@@ -29,7 +29,7 @@ export const verifyJWT = asyncHandler(
       next();
     } catch (error) {
       if (error instanceof ApiError) throw error;
-      throw new ApiError(401, "Invalide or expire token");
+      throw new ApiError(401, "Invalid or expire token");
     }
   },
 );
