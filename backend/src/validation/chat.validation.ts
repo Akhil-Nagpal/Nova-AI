@@ -1,4 +1,13 @@
+import { isValidObjectId } from "mongoose";
 import { z } from "zod";
+
+export const singleConversationSchema = z.object({
+  params: z.object({
+    conversationId: z.string().refine((val) => isValidObjectId(val), {
+      message: "Invalid conversation ID format",
+    }),
+  }),
+});
 
 export const chatMessageSchema = z.object({
   body: z.object({
@@ -8,7 +17,9 @@ export const chatMessageSchema = z.object({
       .max(2000, "Message must not exceed 2000 characters"),
     conversationId: z
       .string()
-      .regex(/^[0-9a-fA-F]{24}$/, "Invalid conversation ID format")
+      .refine((val) => isValidObjectId(val), {
+        message: "Invalid conversation ID format",
+      })
       .optional(),
   }),
 });

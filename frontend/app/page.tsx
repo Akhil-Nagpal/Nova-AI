@@ -55,7 +55,7 @@ export default function Home() {
   const handleSend = async (text: string) => {
     // set the error to null
     setError(null);
-    // save the message in it actuall format
+    // save the message in it actual format
     const draft: Message = {
       role: "user",
       content: text,
